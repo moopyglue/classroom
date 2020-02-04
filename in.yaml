@@ -1,0 +1,11 @@
+start: |
+    #!/bin/bash
+    
+        filloe pasttry
+    is fabulout
+
+    exit 0
+
+stop: |
+    #!/bin/bash
+    echo hello
