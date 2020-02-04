@@ -2,45 +2,140 @@
 
 #import yaml
 import argparse
+import sys
 
-def print_help(command):
-    if command == "build":
-        print("help for build missing - FIX")
-    elif command == "add":
-        print("help for add missing - FIX")
-    elif command == "remove":
-        print("help for remove missing - FIX")
+flag_force=False
+
+#============================================================================
+
+def main():
+
+    global flag_force
+
+    parser = argparse.ArgumentParser( add_help=False , usage=None )
+    parser.add_argument('--help','-h', action='store_true')
+    parser.add_argument('--force','-f', action='store_true')
+    parser.add_argument('params', nargs='*')
+    args=parser.parse_args()
+    flag_force=args.force
+
+    pars=args.params[1:]
+    cmd=args.params[0] if len(args.params)>0 else "help"
+    if args.help:
+        pars.insert(0,"help") 
+
+    if   cmd == "build":   run_build(pars)
+    elif cmd == "destroy": run_destroy(pars)
+    elif cmd == "add":     run_add(pars)
+    elif cmd == "remove":  run_remove(pars)
+    elif cmd == "action":  run_action(pars)
+    elif cmd == "info":    run_info(pars)
+    elif cmd == "list":    run_list(pars)
+    elif cmd == "config":  run_config(pars)
+    elif cmd == "help":    help_main()
     else:
-        print("general help missing - FIX")
+        print("ERROR: no such command as '%s'."%(cmd), file=sys.stderr)
+        help_main(cmd)
+        exit(2)
 
-# Parse command line options
-parser = argparse.ArgumentParser( add_help=False)
-parser.add_argument('-h', '--help', action='store_true')
-parser.add_argument('-f', '--force', action='store_true')
-parser.add_argument('params', nargs='*')
-args = parser.parse_args()
+#============================================================================
 
-pars=args.params[1:]
-if len(args.params)==0 :
-    print_help("help")
-    exit(0)
-else:
-    cmd=args.params[0]
+def run_build(params):
 
-if args.help or (len(pars)>0 and pars[0]=="help"):
-    print_help(cmd)
+    if len(params)>0 and params[0]=="help" :
+        help_build(0)
+    print(dir())
 
-elif cmd == "build":
-    print("build()",pars)
+#============================================================================
 
-elif cmd == "add":
-    print("add()",pars)
+def run_destroy(params):
+    if len(params)>0 and params[0]=="help" :
+        help_destroy(0)
+    print(dir())
 
-elif cmd == "remove":
-    print("remove()",pars)
+#============================================================================
 
-else:
-    print_help(cmd)
+def run_add(params):
+    if len(params)>0 and params[0]=="help" :
+        help_add(0)
+    print(dir())
+
+#============================================================================
+
+def run_remove(params):
+    if len(params)>0 and params[0]=="help" :
+        help_remove(0)
+    print(dir())
+
+#============================================================================
+
+def run_action(params):
+    if len(params)>0 and params[0]=="help" :
+        help_action(0)
+    print(dir())
+
+#============================================================================
+
+def run_info(params):
+    if len(params)>0 and params[0]=="help" :
+        help_info(0)
+    print(dir())
+
+#============================================================================
+
+def run_list(params):
+    if len(params)>0 and params[0]=="help" :
+        help_list(0)
+    print(dir())
+
+#============================================================================
+
+def run_config(params):
+    if len(params)>0 and params[0]=="help" :
+        help_config(0) 
+    print(dir())
+
+#============================================================================
+
+def help_main(exit_status):
+    print("general help missing - FIX")
+    exit(exit_status)
+
+def help_build(exit_status):
+    print("build help missing - FIX")
+    exit(exit_status)
+
+def help_destroy(exit_status):
+    print("destroy help missing - FIX")
+    exit(exit_status)
+
+def help_add(exit_status):
+    print("add help missing - FIX")
+    exit(exit_status)
+
+def help_remove(exit_status):
+    print("remove help missing - FIX")
+    exit(exit_status)
+
+def help_action(exit_status):
+    print("action help missing - FIX")
+    exit(exit_status)
+
+def help_info(exit_status):
+    print("info help missing - FIX")
+    exit(exit_status)
+
+def help_list(exit_status):
+    print("list help missing - FIX")
+    exit(exit_status)
+
+def help_config(exit_status):
+    print("config help missing - FIX")
+    exit(exit_status)
+
+#============================================================================
+
+main()
 
 exit(0)
 
