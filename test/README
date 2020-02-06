@@ -1,0 +1,10 @@
+
+class variables
+
+    CLASSROOM_CLASS 
+    CLASSROOM_SESSION
+    CLASSROOM_STUDENT
+ 
+additional session variables
+
+    CLASSROOM_....

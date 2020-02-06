@@ -1,15 +1,11 @@
 #!/usr/bin/python3
 
-#import yaml
 import argparse
 import sys
 import textwrap
+import os
 
-flag_force=False
-flag_debug=False
-cmd_name="classroom"
-
-#============================================================================
+args=None
 
 def help_main(exit_status):
     print(textwrap.dedent("""
@@ -20,8 +16,11 @@ def help_main(exit_status):
           provided by the user. script language is decided by the user.
 
         Optional Flags:
-          --verbose, -v
-          --help, -h, help
+          --verbose, -v     additional output is generated
+          --help, -h        contextual help information provided 
+          --path, -p        the path to classroom config directory if not default
+                            default is $HOME/.classroom
+                            defaults can also be superceeded by env $CLASSROOM_PATH
 
         Commands:
           classroom class add       create a classroom template
@@ -36,20 +35,21 @@ def help_main(exit_status):
 
 def main():
 
-    global flag_force, flag_debug
+    global args
 
     parser = argparse.ArgumentParser( add_help=False , usage=None )
     parser.add_argument('--help','-h', action='store_true')
-    parser.add_argument('--force','-f', action='store_true')
+    parser.add_argument('--force','-f', action='store_true', help=argparse.SUPPRESS)
     parser.add_argument('--verbose','-v', action='store_true')
-    parser.add_argument('--debug','-d', action='store_true')
+    parser.add_argument('--path','-p')
+    parser.add_argument('--debug','-d', action='store_true', help=argparse.SUPPRESS)
+    parser.add_argument('--linked','-l', action='store_true', help=argparse.SUPPRESS)
     parser.add_argument('params', nargs='*')
     args=parser.parse_args()
-    flag_force=args.force
-    flag_debug=args.debug
-    debug("DEBUG = %s"%(flag_debug))
-    debug("FORCE = %s"%(flag_force))
+    debug("ARGS ",args)
+    debug("CLASSROOM_PATH",classroom_path())
 
+    # process main command and help indicators
     pars=args.params[1:]
     if len(args.params)==0 :
         cmd="help"
@@ -61,6 +61,7 @@ def main():
     if args.help:
         pars.insert(0,"help") 
 
+    # run a command or drop out to help
     if   abbrev_match(cmd,"class"):   run_class(pars)
     elif abbrev_match(cmd,"session"): run_session(pars)
     elif abbrev_match(cmd,"list"):    run_list(pars)
@@ -75,29 +76,32 @@ def main():
 
 # General functions 
 
-def debug(*s):
-    if flag_debug :
-        result=""
-        for n in s:
-            if result=="": 
-                result=n
-            else:
-                result=result+" "+n
-        print(result)
+# debug output - none advertized feature
 
-def verbose(s):
-    if flag_verbose or flag_debug:
-        print(s)
-
-def error(s):
+def out_format(s):
     result=""
     for n in s:
         if result=="": 
-            result=n
+            result=str(n)
         else:
-            result=result+" "+n
-    print(result,file=sys.stderr)
+            result=result+" "+str(n)
+    return result
 
+def debug(*s):
+    if args.debug :
+        print(out_format(s))
+
+# verbose output - automatically included with debug flag
+def verbose(*s):
+    if args.verbose or args.debug:
+        print(out_format(s))
+
+# error output 
+def error(*s):
+    print(out_format(s),file=sys.stderr)
+
+# allow for shortening of keywords for convenience
+# my matching a minimum length for uniqueness
 def abbrev_match(s,keyword,min_length=2):
     debug("abbrev_match()",s,keyword,keyword[:len(s)])
     if len(s)>=min_length and s==keyword[:len(s)] :
@@ -105,6 +109,25 @@ def abbrev_match(s,keyword,min_length=2):
         return(True)
     return(False);
 
+# get the path to the main command config directory
+def classroom_path():
+
+    cpath=""
+    
+    if args.path:
+        if os.path.isdir(args.path):
+            return(args.path)
+        error("ERROR specified --path directory does not exist",args.path)
+    elif os.environ.get('CLASSROOM_PATH'):
+        if os.path.isdir(os.environ['CLASSROOM_PATH']):
+            return(os.environ['CLASSROOM_PATH'])
+        error("ERROR env var CLASSROOM_PATH directory does not exists",os.environ['CLASSROOM_PATH'])
+    else:
+        if os.path.isdir(os.environ['HOME']+"/.classroom"):
+            os.mkdir(os.environ['HOME']+"/.classroom")
+        return(os.environ['HOME']+"/.classroom")
+    exit(2)
+    
 #============================================================================
 
 def help_class(exit_status):
