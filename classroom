@@ -7,6 +7,13 @@ import os
 
 args=None
 
+#============================================================================
+#
+#   classroom - a template for organizing classroom context for
+#               students based on a set of action and setup config.
+#   
+#============================================================================
+
 def help_main(exit_status):
     print(textwrap.dedent("""
         Description:
