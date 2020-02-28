@@ -111,9 +111,6 @@ def abbrev_match(s,keyword,min_length=2):
 
 # get the path to the main command config directory
 def classroom_path():
-
-    cpath=""
-    
     if args.path:
         if os.path.isdir(args.path):
             return(args.path)
@@ -123,8 +120,10 @@ def classroom_path():
             return(os.environ['CLASSROOM_PATH'])
         error("ERROR env var CLASSROOM_PATH directory does not exists",os.environ['CLASSROOM_PATH'])
     else:
-        if os.path.isdir(os.environ['HOME']+"/.classroom"):
+        if not os.path.isdir(os.environ['HOME']+"/.classroom"):
+            verbose("creating command database "+os.environ['HOME']+"/.classroom")
             os.mkdir(os.environ['HOME']+"/.classroom")
+        os.chmod(os.environ['HOME']+"/.classroom",0o0755)
         return(os.environ['HOME']+"/.classroom")
     exit(2)
     
@@ -167,7 +166,7 @@ def run_class(params):
 #============================================================================
 
 def run_class_add(params):
-    debug("run_class_add()",",".join(params))
+    verbose("run_class_add()",",".join(params))
     if len(params)==0 or params[0]=="help":
         help_class(0)
     print("This function is not yet implemented (class add)")
@@ -175,7 +174,7 @@ def run_class_add(params):
 #============================================================================
 
 def run_class_rm(params):
-    debug("run_class_rm()",",".join(params))
+    verbose("run_class_rm()",",".join(params))
     if len(params)==0 or params[0]=="help":
         help_class(0)
     print("This function is not yet implemented (class rm)")
@@ -204,7 +203,7 @@ def run_session(params):
 #============================================================================
 
 def run_session_add(params):
-    debug("run_session_add()",",".join(params))
+    verbose("run_session_add()",",".join(params))
     if len(params)==0 or params[0]=="help":
         help_session(0)
     print("This function is not yet implemented (session add)")
@@ -212,7 +211,7 @@ def run_session_add(params):
 #============================================================================
 
 def run_session_rm(params):
-    debug("run_session_rm()",",".join(params))
+    verbose("run_session_rm()",",".join(params))
     if len(params)==0 or params[0]=="help":
         help_session(0)
     print("This function is not yet implemented (session rm)")
@@ -220,7 +219,7 @@ def run_session_rm(params):
 #============================================================================
 
 def run_session_action(params):
-    debug("run_session_action()",",".join(params))
+    verbose("run_session_action()",",".join(params))
     if len(params)==0 or params[0]=="help":
         help_session(0)
     print("This function is not yet implemented (session action)")
@@ -228,10 +227,11 @@ def run_session_action(params):
 #============================================================================
 
 def help_list(exit_status):
+    print("list help missing - FIX")
     exit(exit_status)
 
 def run_list(params):
-    debug("run_list()",",".join(params))
+    verbose("run_list()",",".join(params))
     if len(params)>0 and params[0]=="help":
         help_list(0)
     print("This function is not yet implemented (list)")
@@ -243,7 +243,7 @@ def help_config(exit_status):
     exit(exit_status)
 
 def run_config(params):
-    debug("run_config()",",".join(params))
+    verbose("run_config()",",".join(params))
     if len(params)>0 and params[0]=="help":
         help_config(0) 
     print("This function is not yet implemented (config)")
